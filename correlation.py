@@ -6,14 +6,8 @@ import mmap
 import shutil
 from datetime import timezone, datetime
 
-from config import LOG_PATH, CORR_NAME, CORR_PATH, MTRX_PATH, MTRX_NAME, COLUMNS, ROWS
-
-
-def logging(msg, log_name='log_corr.txt'):
-    cur_time = datetime.now(timezone.utc)
-    with open(os.path.join(LOG_PATH, log_name), 'a') as f:
-        f.write(f'[{cur_time}] '+msg)
-    print(f'[{cur_time}] '+msg)
+from config import LOG_PATH, CORR_NAME, CORR_PATH, MTRX_PATH, MTRX_NAME, TRANSFER_FORMAT, logging
+from connection import TransferFactory
 
 def calculate_column_wise_pearson(df):
     correlation_df = df.corr(method='pearson')
@@ -41,11 +35,11 @@ def automatic_write(data_list, name_list):
         if os.path.exists(name_list[i]):
             os.rename(name_list[i], ori_path)
             os.chmod(ori_path, 0o744)
-    logging('===autom write=== : backup')
+    logging.info('===autom write=== : backup')
     for i in range(length):
         os.rename(temp_name_list[i], name_list[i])
         os.chmod(name_list[i], 0o744)
-    logging('===autom write=== : validate')
+    logging.info('===autom write=== : validate')
 
 def rollback(name_list=[CORR_PATH + CORR_NAME, MTRX_PATH + MTRX_NAME]):
     with open(os.path.join(LOG_PATH, 'log_corr.txt'), 'r') as f:
@@ -77,27 +71,29 @@ def rollback(name_list=[CORR_PATH + CORR_NAME, MTRX_PATH + MTRX_NAME]):
 
 def Listen_Regression():
     try:
-        # shared memory creation.
-        # websocket connection
-        memory = posix_ipc.SharedMemory("/matrix_memory")
-        semaphore_write = posix_ipc.Semaphore("/matrix_write", posix_ipc.O_CREAT)
-        semaphore_read = posix_ipc.Semaphore("/matrix_read", posix_ipc.O_CREAT)
-        mem_map = mmap.mmap(memory.fd, memory.size)
+        fact = TransferFactory()
+        trans = fact.create_transfer_method(TRANSFER_FORMAT[1])
+        # memory = posix_ipc.SharedMemory("/matrix_memory")
+        # semaphore_write = posix_ipc.Semaphore("/matrix_write", posix_ipc.O_CREAT)
+        # semaphore_read = posix_ipc.Semaphore("/matrix_read", posix_ipc.O_CREAT)
+        # mem_map = mmap.mmap(memory.fd, memory.size)
+        trans.corr_init()
         LOOP_TIME = 10
         while LOOP_TIME:
             # 拿信号量。
-            logging("===Program2=== : Waiting for read semaphore")
-            semaphore_read.acquire()
-            logging("===Program2=== : Got read semaphore")
-            mem_map.seek(0)
-            matrix = np.frombuffer(mem_map.read(ROWS * COLUMNS * 8), dtype=np.float64).reshape((ROWS, COLUMNS))
-            semaphore_write.release()
-            df = pd.DataFrame(matrix, columns=[f"Column{i}" for i in range(COLUMNS)])
-            logging("===Program2=== : Correlation matrix calculating...")
+            # logging.info("===Program2=== : Waiting for read semaphore")
+            # semaphore_read.acquire()
+            # logging.info("===Program2=== : Got read semaphore")
+            # mem_map.seek(0)
+            # matrix = np.frombuffer(mem_map.read(ROWS * COLUMNS * 8), dtype=np.float64).reshape((ROWS, COLUMNS))
+            # semaphore_write.release()
+            # df = pd.DataFrame(matrix, columns=[f"Column{i}" for i in range(COLUMNS)])
+            df = trans.receive_message()
+            logging.info("===Program2=== : Correlation matrix calculating...")
             correlation_df = calculate_column_wise_pearson(df)
-            logging("===Program2=== : Correlation matrix calculated")
+            logging.info("===Program2=== : Correlation matrix calculated")
             automatic_write([correlation_df, df], [os.path.join(CORR_PATH, CORR_NAME), os.path.join(MTRX_PATH, MTRX_NAME)])
-            logging("===Program2=== : Files updated")
+            logging.info("===Program2=== : Files updated")
             LOOP_TIME -= 1
     finally:
         pass
