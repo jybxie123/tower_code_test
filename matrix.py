@@ -7,7 +7,7 @@ import mmap
 from datetime import timezone, datetime
 
 # import the global variables from correlation.py, just means to avoid data inconsistency
-from correlation import COLUMNS, ROWS, MTRX_PATH, MTRX_NAME, LOG_PATH
+from config import COLUMNS, ROWS, MTRX_PATH, MTRX_NAME, LOG_PATH
 
 
 
@@ -51,7 +51,7 @@ def run():
     array = df.to_numpy()
     memory_size = array.size * array.itemsize  # 计算字节数
     logging(f"Memory size needed: {memory_size} bytes")
-    memory = posix_ipc.SharedMemory("/matrix_memory", posix_ipc.O_CREAT, size=ROWS * COLUMNS * 8) #
+    memory = posix_ipc.SharedMemory("/matrix_memory", posix_ipc.O_CREAT, size=800000) #
     semaphore_write = posix_ipc.Semaphore("/matrix_write", posix_ipc.O_CREAT, initial_value=1)
     semaphore_read = posix_ipc.Semaphore("/matrix_read", posix_ipc.O_CREAT, initial_value=0)
     mem_map = mmap.mmap(memory.fd, memory.size)

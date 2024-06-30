@@ -6,15 +6,7 @@ import mmap
 import shutil
 from datetime import timezone, datetime
 
-
-ROOT_PATH = '/Users/jiangyanbo/working/code_exercise/tower/question1'
-LOG_PATH = os.path.join(ROOT_PATH, 'code')
-CORR_PATH = os.path.join(ROOT_PATH, 'code')
-MTRX_PATH = os.path.join(ROOT_PATH, 'code')
-CORR_NAME = "correlation_matrix.csv"
-MTRX_NAME = 'updated_matrix.csv'
-COLUMNS = 1000
-ROWS = 100
+from config import LOG_PATH, CORR_NAME, CORR_PATH, MTRX_PATH, MTRX_NAME, COLUMNS, ROWS
 
 
 def logging(msg, log_name='log_corr.txt'):
