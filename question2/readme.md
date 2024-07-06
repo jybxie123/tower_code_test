@@ -8,25 +8,9 @@ go to the config.py to modify the root path to your towerpath
 
 # quick start
 ```shell
-cd tower_code_test/question1
-./quick_start.sh
+cd tower_code_test/question2/src
+python main.py
 ```
-
-
-# start manually
-```shell
-git clone my repo:
-git@github.com:jybxie123/tower_code_test.git
-cd tower_code_test/question1/src
-python matrix.py
-```
-go to another shell, go to the same path:
-```shell
-cd tower_code_test/question1/src
-python correlation.py
-```
-you can check the log file to see the details.
-
 
 # Recompile your c++ functions:
 
@@ -47,7 +31,5 @@ python3-config --includes
 python pearson/setup.py build_ext --inplace
 ```
 then you can find the .so file in the path
-
-
 
 
