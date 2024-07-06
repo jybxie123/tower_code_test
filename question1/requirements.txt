@@ -1,0 +1,5 @@
+websockets
+posix_ipc
+pybind11
+
+

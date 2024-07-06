@@ -64,7 +64,7 @@ class WebSocketDataTransfer:
                 async for message in websocket:
                     await self.message_queue.put(message)
         except websockets.ConnectionClosedError as e:
-            logging.info(f"===Program2=== : Connection closed: {e}")
+            logging.info(f"===Program 2=== : Connection closed: {e}")
 
     def _run_event_loop(self):
         asyncio.set_event_loop(self.recv_loop)
@@ -81,7 +81,7 @@ class WebSocketDataTransfer:
             array = array.reshape((ROWS, COLUMNS))
             return pd.DataFrame(array, columns=[f'Column{i}' for i in range(COLUMNS)])
         except asyncio.TimeoutError:
-            logging.info("===Program2=== : Message receiving timed out.")
+            logging.info("===Program 2=== : Message receiving timed out.")
             raise TimeoutError("Message received timed out.")
 
 
@@ -133,7 +133,7 @@ class SharedMemoryTransfer():
 
     def receive_message(self, timeout=TIMEOUT):
         if self.corr_semaphore_read.acquire(timeout=timeout):
-            logging.info(f"===Program2=== : Message receiving timed out.")
+            logging.info(f"===Program 2=== : Message receiving timed out.")
             raise TimeoutError("Message received timed out.")
         self.corr_mem_map.seek(0)
         corr_matrix = np.frombuffer(self.corr_mem_map.read(self.shm_size), dtype=np.float64).reshape((ROWS, COLUMNS))

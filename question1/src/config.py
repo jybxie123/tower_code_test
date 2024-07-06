@@ -1,7 +1,7 @@
 import os
 import logging
 
-ROOT_PATH = '/Users/jiangyanbo/working/code_exercise/tower/question1/code'
+ROOT_PATH = '/Users/jiangyanbo/working/code_exercise/tower/question1'
 LOG_PATH = os.path.join(ROOT_PATH, 'log')
 CORR_PATH = os.path.join(ROOT_PATH, 'data')
 MTRX_PATH = os.path.join(ROOT_PATH, 'data')
@@ -25,6 +25,8 @@ MTRX_PID_FILE = 'mtrx_program.pid'
 CORR_PID_FILE = 'corr_program.pid'
 TRANSFER_FORMAT = ['websocket', 'shared_memory']
 
+if os.path.exists(ROOT_PATH):
+    os.makedirs(os.path.dirname(LOG_PATH), exist_ok=True)
 logging.basicConfig(filename=os.path.join(LOG_PATH, LOG_NAME),
                     level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s',

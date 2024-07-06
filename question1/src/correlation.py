@@ -33,6 +33,7 @@ def automatic_write(data_list, name_list):
         temp_path = name_list[i]+'.tmp'
         ori_path = name_list[i]+'.bak'
         temp_name_list.append(temp_path)
+        os.makedirs(os.path.dirname(temp_path), exist_ok=True)
         data_list[i].to_csv(temp_path, index=False)
         os.chmod(temp_path, 0o744)
         if os.path.exists(name_list[i]):
@@ -81,31 +82,31 @@ def Listen_Regression():
         trans.corr_init()
         LOOP_TIME = 10
         while LOOP_TIME:
-            logging.info("===Program2=== : Waiting for data...")
+            logging.info("===Program 2=== : Waiting for data...")
             df = trans.receive_message()
 
-            logging.info("===Program2=== : Correlation matrix calculating...")
+            logging.info("===Program 2=== : Correlation matrix calculating...")
             start = datetime.now()
             correlation_df = calculate_column_wise_pearson(df)
             delta = datetime.now() - start
-            logging.info(f"===Program2=== : Correlation matrix calculated. Calculation time : {delta.total_seconds()}")
+            logging.info(f"===Program 2=== : Correlation matrix calculated. Calculation time : {delta.total_seconds()}")
             
-            logging.info("===Program2=== : Optimized Correlation matrix calculating...")
+            logging.info("===Program 2=== : Optimized Correlation matrix calculating...")
             start2 = datetime.now()
             correlation_df2 = calculate_column_wise_pearson_optimized(df)
             delta2 = datetime.now() - start2
-            logging.info(f"===Program2=== : Optimized Correlation matrix calculated. Calculation time : {delta2.total_seconds()}")
+            logging.info(f"===Program 2=== : Optimized Correlation matrix calculated. Calculation time : {delta2.total_seconds()}")
             
-            print(f"===Program2=== : Correlation matrix========")
+            print(f"===Program 2=== : Correlation matrix========")
             print(correlation_df.head(10))
-            print(f"===Program2=== : Optimized Correlation matrix========")
+            print(f"===Program 2=== : Optimized Correlation matrix========")
             print(correlation_df2.head(10))
             
             automatic_write([correlation_df, df], [os.path.join(CORR_PATH, CORR_NAME), os.path.join(MTRX_PATH, MTRX_NAME)])
-            logging.info("===Program2=== : Files updated")
+            logging.info("===Program 2=== : Files updated")
             LOOP_TIME -= 1
     except TimeoutError:
-        logging.info("===Program2=== : Timeout, finished.")
+        logging.info("===Program 2=== : Timeout, finished.")
     finally:
         release_pid_file(CORR_PID_FILE)
 

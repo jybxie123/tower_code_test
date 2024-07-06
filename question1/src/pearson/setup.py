@@ -12,7 +12,7 @@ class get_pybind_include(object):
 ext_modules = [
     Extension(
         'pearson',
-        ['/Users/jiangyanbo/working/code_exercise/tower/question1/code/pearson/pearson_correlation.cpp'],
+        ['pearson_correlation.cpp'],
         include_dirs=[
             pybind11.get_include(),
             '/opt/homebrew/anaconda3/envs/personal-env-1/include/python3.11',
