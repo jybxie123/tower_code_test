@@ -75,7 +75,7 @@ if __name__ == '__main__':
         beta_df = BETASTRATEGYDICT[i].beta(tickers)
         delta = datetime.now() - start
         print(f"{i} Beta calculation time: {delta.total_seconds()} seconds")
-        # print(beta_df)
+        print(beta_df.head(10))
 
 
 

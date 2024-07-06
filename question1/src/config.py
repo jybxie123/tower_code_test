@@ -2,14 +2,16 @@ import os
 import logging
 
 ROOT_PATH = '/Users/jiangyanbo/working/code_exercise/tower/question1'
+if not os.path.exists(ROOT_PATH):
+    raise Exception(f"Root path {ROOT_PATH} does not exist, please check the path in config.py")
 LOG_PATH = os.path.join(ROOT_PATH, 'log')
 CORR_PATH = os.path.join(ROOT_PATH, 'data')
 MTRX_PATH = os.path.join(ROOT_PATH, 'data')
 LOG_NAME = 'matrix_correlation.log'
 CORR_NAME = "correlation_matrix.csv"
 MTRX_NAME = 'updated_matrix.csv'
-COLUMNS = 100
-ROWS = 100
+COLUMNS = 1000
+ROWS = 10000
 TIMEOUT = 60
 
 SHARED_MEMORY_NAME = "/matrix_memory"

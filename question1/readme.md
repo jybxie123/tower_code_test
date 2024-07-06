@@ -1,22 +1,21 @@
-# preparation
+# Preparation
 ```shell
 git clone git@github.com:jybxie123/tower_code_test.git
 cd tower_code_test/question1/src
 ```
-go to the config.py to modify the root path to your towerpath
+Go to the config.py to modify the root path to your towerpath
 
 
-# quick start
+# Quick start
 ```shell
 cd tower_code_test/question1
 ./quick_start.sh
 ```
 
 
-# start manually
+# Start manually
+Note that you must run the matrix.py before correlation.py.
 ```shell
-git clone my repo:
-git@github.com:jybxie123/tower_code_test.git
 cd tower_code_test/question1/src
 python matrix.py
 ```
@@ -28,7 +27,7 @@ python correlation.py
 you can check the log file to see the details.
 
 
-# Recompile your c++ functions:
+# Recompile c++ functions:
 
 1. please install pybind11 first.
 ```shell

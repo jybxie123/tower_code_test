@@ -1,4 +1,4 @@
-# preparation
+# Preparation
 ```shell
 git clone git@github.com:jybxie123/tower_code_test.git
 cd tower_code_test/question1/src
@@ -6,7 +6,7 @@ cd tower_code_test/question1/src
 go to the config.py to modify the root path to your towerpath
 
 
-# quick start
+# Quick start
 ```shell
 cd tower_code_test/question2/src
 python main.py
