@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-from datetime import datetime, timedelta
 import os
 from abc import ABC, abstractmethod
 from multiprocessing import Pool, cpu_count
@@ -17,7 +16,6 @@ class PandasStrategy(ReturnStrategy):
         market_return = {}
         df['weighted_return'] = df['return'] * df['weight']
         for date in dates:
-            # print(type(date), df['date'].dtype, 3)
             df_date = df.query('date==@date')
             nominator = df_date['weighted_return'].sum()
             denominator = df_date['weight'].sum()

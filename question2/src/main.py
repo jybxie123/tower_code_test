@@ -44,31 +44,14 @@ def get_all_return(df, market_return):
     return df_pivot
 
 
-
-'''
-可优化：
-    return部分：
-    计算市场的时候，可以pandas或者numpy的groupby方法，提高效率。
-    多进程实现？似乎不用。
-
-
-    beta部分：
-    复用计算结果，中间计算值改为属性记录下来，每次修改日期时，只需更新部分数据。
-    使用numpy计算，提高计算效率。
-    并行计算。
-'''
-
-
 if __name__ == '__main__':
 
     df = get_origin_data()
     for i in RETURNSTRATEGYDICT:
         market_return = RETURNSTRATEGYDICT[i].get_return(df)
-        # print(i)
-        # print(market_return)
+        print(market_return)
     
     tickers = get_all_return(df, market_return)
-    # print(tickers)
 
     for i in BETASTRATEGYDICT:
         start = datetime.now()

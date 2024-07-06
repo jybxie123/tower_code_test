@@ -4,8 +4,6 @@ from datetime import datetime, timedelta
 import os
 from abc import ABC, abstractmethod
 from config import TICKERS, MARKET, DATE
-import sys
-sys.path.insert(0, '/Users/jiangyanbo/working/code_exercise/tower/question2/code')
 from cal_beta import cal_beta
 
 
