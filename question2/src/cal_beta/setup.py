@@ -4,11 +4,11 @@ import pybind11
 ext_modules = [
     Extension(
         'cal_beta',
-        ['/Users/jiangyanbo/working/code_exercise/tower/question2/code/cal_beta/cal_beta.cpp'],
+        ['cal_beta.cpp'],
         include_dirs=[
             pybind11.get_include(),
-            '/opt/homebrew/anaconda3/envs/personal-env-1/include/python3.11',
-            '/opt/homebrew/anaconda3/envs/personal-env-1/lib/python3.11/site-packages/pybind11/include',
+            '/opt/homebrew/anaconda3/envs/tower_code_test/include/python3.11',
+            '/opt/homebrew/anaconda3/envs/tower_code_test/lib/python3.11/site-packages/pybind11/include',
         ],
         language='c++',
         extra_compile_args=['-O3', '-march=native', '-std=c++17'] 
