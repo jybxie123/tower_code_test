@@ -1,17 +1,22 @@
 import os
-import pandas as pd
-import numpy as np
-import posix_ipc
-import mmap
 import shutil
-from datetime import timezone, datetime
-
-from config import LOG_PATH, CORR_NAME, CORR_PATH, MTRX_PATH, MTRX_NAME, TRANSFER_FORMAT, logging
-from connection import TransferFactory
+import sys
+import pandas as pd
+from pearson import multiple_columns_pearson_correlation_with_threads
+from datetime import datetime
+from config import LOG_PATH, LOG_NAME, CORR_NAME, CORR_PATH, MTRX_PATH, MTRX_NAME, \
+TRANSFER_FORMAT, CORR_PID_FILE, logging
+from process_lock import acquire_pid_file, release_pid_file
+from transfer import TransferFactory
 
 def calculate_column_wise_pearson(df):
     correlation_df = df.corr(method='pearson')
     return correlation_df
+
+def calculate_column_wise_pearson_optimized(df):
+    data = df.to_numpy()
+    res = multiple_columns_pearson_correlation_with_threads(data)
+    return pd.DataFrame(res, index=df.columns, columns=df.columns)
 
 def automatic_write(data_list, name_list):
     '''
@@ -20,7 +25,6 @@ def automatic_write(data_list, name_list):
     if the last row is backup, rollback to last version.
     if the last row is validate, the current files are valid.
     '''
-    ori_name_list = []
     temp_name_list = []
     if len(data_list) != len(name_list):
         raise ValueError("===autom write=== : data_list and name_list should have the same length")
@@ -29,8 +33,7 @@ def automatic_write(data_list, name_list):
         temp_path = name_list[i]+'.tmp'
         ori_path = name_list[i]+'.bak'
         temp_name_list.append(temp_path)
-        ori_name_list.append(ori_path)
-        data_list[i].to_csv(temp_path, index=True)
+        data_list[i].to_csv(temp_path, index=False)
         os.chmod(temp_path, 0o744)
         if os.path.exists(name_list[i]):
             os.rename(name_list[i], ori_path)
@@ -42,7 +45,7 @@ def automatic_write(data_list, name_list):
     logging.info('===autom write=== : validate')
 
 def rollback(name_list=[CORR_PATH + CORR_NAME, MTRX_PATH + MTRX_NAME]):
-    with open(os.path.join(LOG_PATH, 'log_corr.txt'), 'r') as f:
+    with open(os.path.join(LOG_PATH, LOG_NAME), 'r') as f:
         lines = f.readlines()
     if not lines:
         return
@@ -70,45 +73,43 @@ def rollback(name_list=[CORR_PATH + CORR_NAME, MTRX_PATH + MTRX_NAME]):
     return 
 
 def Listen_Regression():
+    if not acquire_pid_file(CORR_PID_FILE):
+        return
     try:
         fact = TransferFactory()
         trans = fact.create_transfer_method(TRANSFER_FORMAT[1])
-        # memory = posix_ipc.SharedMemory("/matrix_memory")
-        # semaphore_write = posix_ipc.Semaphore("/matrix_write", posix_ipc.O_CREAT)
-        # semaphore_read = posix_ipc.Semaphore("/matrix_read", posix_ipc.O_CREAT)
-        # mem_map = mmap.mmap(memory.fd, memory.size)
         trans.corr_init()
         LOOP_TIME = 10
         while LOOP_TIME:
-            # 拿信号量。
-            # logging.info("===Program2=== : Waiting for read semaphore")
-            # semaphore_read.acquire()
-            # logging.info("===Program2=== : Got read semaphore")
-            # mem_map.seek(0)
-            # matrix = np.frombuffer(mem_map.read(ROWS * COLUMNS * 8), dtype=np.float64).reshape((ROWS, COLUMNS))
-            # semaphore_write.release()
-            # df = pd.DataFrame(matrix, columns=[f"Column{i}" for i in range(COLUMNS)])
+            logging.info("===Program2=== : Waiting for data...")
             df = trans.receive_message()
+
             logging.info("===Program2=== : Correlation matrix calculating...")
+            start = datetime.now()
             correlation_df = calculate_column_wise_pearson(df)
-            logging.info("===Program2=== : Correlation matrix calculated")
+            delta = datetime.now() - start
+            logging.info(f"===Program2=== : Correlation matrix calculated. Calculation time : {delta.total_seconds()}")
+            
+            logging.info("===Program2=== : Optimized Correlation matrix calculating...")
+            start2 = datetime.now()
+            correlation_df2 = calculate_column_wise_pearson_optimized(df)
+            delta2 = datetime.now() - start2
+            logging.info(f"===Program2=== : Optimized Correlation matrix calculated. Calculation time : {delta2.total_seconds()}")
+            
+            print(f"===Program2=== : Correlation matrix========")
+            print(correlation_df.head(10))
+            print(f"===Program2=== : Optimized Correlation matrix========")
+            print(correlation_df2.head(10))
+            
             automatic_write([correlation_df, df], [os.path.join(CORR_PATH, CORR_NAME), os.path.join(MTRX_PATH, MTRX_NAME)])
             logging.info("===Program2=== : Files updated")
             LOOP_TIME -= 1
+    except TimeoutError:
+        logging.info("===Program2=== : Timeout, finished.")
     finally:
-        pass
+        release_pid_file(CORR_PID_FILE)
 
 
 if __name__ == "__main__":
     Listen_Regression()
 
-
-
-'''
-如果两个程序在不同机器上运行，需要用websocket的方式替换共享内存。来通信；
-如果矩阵维度非常大，可以考虑用多线程的方式来计算，但是需要考虑线程安全问题；
-如果计算相关性太慢，可以考虑用GPU加速计算；
-如果计算相关性太慢，可以考虑用近似算法来计算；
-如果计算相关性太慢，可以考虑用分布式计算的方式来计算；
-如果计算相关性太慢，可以考虑用锁机制或者消息队列的形式平衡两个程序的速度；
-'''
