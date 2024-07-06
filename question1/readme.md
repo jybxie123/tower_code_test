@@ -1,47 +1,53 @@
 # Preparation
 ```shell
 git clone git@github.com:jybxie123/tower_code_test.git
-cd tower_code_test/question1/src
+cd tower_code_test
 ```
 Go to the config.py to modify the root path to your towerpath
 
+I recommend using the conda environment:
+```shell
+conda create -n tower_code_test python=3.11 -y
+conda activate tower_code_test
+cd question1
+pip install -r requirements.txt
+```
 
 # Quick start
 ```shell
-cd tower_code_test/question1
+cd question1
 ./quick_start.sh
 ```
 
-
 # Start manually
-Note that you must run the matrix.py before correlation.py.
+Note that you must run the matrix.py before correlation.py. 
+Otherwise, the program will fail. I think this is in line with expectations.
 ```shell
-cd tower_code_test/question1/src
+cd question1/src
 python matrix.py
 ```
 go to another shell, go to the same path:
 ```shell
-cd tower_code_test/question1/src
+cd question1/src
 python correlation.py
 ```
-you can check the log file to see the details.
-
+For question1, you can check the log file to see the details.
+I will print the correlation matrix in the stdout, to check the correctness.
 
 # Recompile c++ functions:
 
-1. please install pybind11 first.
+1. please install pybind11 and setuptools first.
 ```shell
-# cd /path/to/your/repository
-cd src
-pip install pybind11
+cd question1/src
+pip install setuptools pybind11
 ```
-2. use these commands to find the correct package path for your setup.py
+1. use these commands to find the correct path in ext_modules for your setup.py
 ```shell
 python -c "import pybind11; print(pybind11.get_include())"
 python3-config --includes
 ```
-3. Modify other configuration items to match your OS. For the auther, it is MACOS.
-4. run this command to compile your setup.py
+2. Modify other configuration items in setup.py to match your OS. For the auther, it is MACOS.
+3. Run this command to compile your setup.py
 ```shell
 python pearson/setup.py build_ext --inplace
 ```

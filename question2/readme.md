@@ -1,32 +1,39 @@
 # Preparation
 ```shell
 git clone git@github.com:jybxie123/tower_code_test.git
-cd tower_code_test/question1/src
+cd tower_code_test
 ```
-go to the config.py to modify the root path to your towerpath
+Go to the config.py to modify the root path to your towerpath
 
+I recommend using the conda environment: (If it exists, skip this)
+```shell
+conda create -n tower_code_test python=3.11 -y
+conda activate tower_code_test
+cd question2
+pip install -r requirements.txt
+```
 
 # Quick start
 ```shell
-cd tower_code_test/question2/src
+cd question2/src
 python main.py
 ```
 
-# Recompile your c++ functions:
+# Recompile c++ functions:
 
-1. please install pybind11 first.
+1. please install pybind11 and setuptools first.
 ```shell
 # cd /path/to/your/repository
-cd src
-pip install pybind11
+cd question2/src
+pip install setuptools pybind11
 ```
-2. use these commands to find the correct package path for your setup.py
+1. use these commands to find the correct path in ext_modules for your setup.py
 ```shell
 python -c "import pybind11; print(pybind11.get_include())"
 python3-config --includes
 ```
-3. Modify other configuration items to match your OS. For the auther, it is MACOS.
-4. run this command to compile your setup.py
+2. Modify other configuration items in setup.py to match your OS. For the auther, it is MACOS.
+3. Run this command to compile your setup.py
 ```shell
 python pearson/setup.py build_ext --inplace
 ```

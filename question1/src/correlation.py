@@ -1,6 +1,5 @@
 import os
 import shutil
-import sys
 import pandas as pd
 from pearson import multiple_columns_pearson_correlation_with_threads
 from datetime import datetime
