@@ -7,7 +7,8 @@ import posix_ipc
 import mmap
 import datetime
 import time
-from config import COLUMNS, ROWS, SEMAPHORE_READ, SEMAPHORE_WRITE, SHARED_MEMORY_NAME, WS_PORT, WS_HOST, TIMEOUT, SHARED_MEMORY, WEBSOCKET_MAX_SIZE, logging
+from config import COLUMNS, ROWS, SEMAPHORE_READ, SEMAPHORE_WRITE, \
+    SHARED_MEMORY_NAME, WS_PORT, WS_HOST, TIMEOUT, SHARED_MEMORY, WEBSOCKET_MAX_SIZE, logging
 
 class WebSocketDataTransfer:
     def __init__(self, host=WS_HOST, port=WS_PORT):
@@ -49,11 +50,7 @@ class WebSocketDataTransfer:
         threading.Thread(target=self.start_server, daemon=True).start()
 
     def send_message(self, data):
-        
         message = data.to_numpy().tobytes()
-        # rows, cols = data.shape
-        # shape_info = np.array([rows, cols], dtype=np.int32).tobytes()
-        # message_size = len(message) + len(shape_info)
         print(f"Message size: {len(message)} bytes")
         asyncio.run_coroutine_threadsafe(self._send_message(message), self.loop)
 
@@ -174,7 +171,6 @@ if __name__ == "__main__":
     print('start corr')
     while not trans.client:
         time.sleep(0.1)
-    # simulate data generation
     print('ready')
     matrix = np.random.rand(ROWS, COLUMNS)
     df = pd.DataFrame(matrix, columns=[f'Column{i}' for i in range(COLUMNS)])
