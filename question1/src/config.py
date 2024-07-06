@@ -1,7 +1,7 @@
 import os
 import logging
 
-ROOT_PATH = '/Users/jiangyanbo/working/code_exercise/tower/question1'
+ROOT_PATH = '/Users/jiangyanbo/working/code_exercise/tower/question1/code'
 LOG_PATH = os.path.join(ROOT_PATH, 'log')
 CORR_PATH = os.path.join(ROOT_PATH, 'data')
 MTRX_PATH = os.path.join(ROOT_PATH, 'data')
