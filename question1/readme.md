@@ -1,9 +1,5 @@
 # Preparation
-```shell
-git clone git@github.com:jybxie123/tower_code_test.git
-cd tower_code_test
-```
-Go to the config.py to modify the root path to your towerpath
+Go to the question1/src/config.py to modify the root path to your question1 folder's path.
 
 I recommend using the conda environment:
 ```shell

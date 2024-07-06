@@ -1,7 +1,7 @@
 import os
 import logging
 
-ROOT_PATH = '/Users/jiangyanbo/working/code_exercise/tower/question1'
+ROOT_PATH = '/your/path/to/tower_code_test/question1'
 if not os.path.exists(ROOT_PATH):
     raise Exception(f"Root path {ROOT_PATH} does not exist, please check the path in config.py")
 LOG_PATH = os.path.join(ROOT_PATH, 'log')
@@ -28,7 +28,7 @@ CORR_PID_FILE = 'corr_program.pid'
 TRANSFER_FORMAT = ['websocket', 'shared_memory']
 
 if os.path.exists(ROOT_PATH):
-    os.makedirs(os.path.dirname(LOG_PATH), exist_ok=True)
+    os.makedirs(LOG_PATH, exist_ok=True)
 logging.basicConfig(filename=os.path.join(LOG_PATH, LOG_NAME),
                     level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s',
